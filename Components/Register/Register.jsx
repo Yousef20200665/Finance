@@ -1,6 +1,5 @@
-// Register.js
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 
 const Register = ({ navigation }) => {
@@ -9,9 +8,42 @@ const Register = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [gender, setGender] = useState('');
   const [phone, setPhone] = useState('');
+  const [visaType, setVisaType] = useState('');
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('');
+  const [lastTransaction, setLastTransaction] = useState('');
 
-  const handleRegister = () => {
-    // Handle registration logic
+  const handleRegister = async () => {
+    try {
+      const response = await fetch('localhost:8080/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          gender,
+          phone,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 201) {
+        Alert.alert('Success', data.message, [
+          { text: 'OK', onPress: () => navigation.navigate('Login') },
+        ]);
+      } else {
+        Alert.alert('Success', data.message, [
+          { text: 'OK', onPress: () => navigation.navigate('Login') },
+        ]);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to register!');
+    }
   };
 
   return (
@@ -47,6 +79,36 @@ const Register = ({ navigation }) => {
         value={phone}
         onChangeText={setPhone}
         keyboardType="phone-pad"
+        style={styles.input}
+      />
+      <TextInput
+        label="Visa Type"
+        value={visaType}
+        onChangeText={setVisaType}
+        style={styles.input}
+      />
+      <TextInput
+        label="Address"
+        value={address}
+        onChangeText={setAddress}
+        style={styles.input}
+      />
+      <TextInput
+        label="City"
+        value={city}
+        onChangeText={setCity}
+        style={styles.input}
+      />
+      <TextInput
+        label="Country"
+        value={country}
+        onChangeText={setCountry}
+        style={styles.input}
+      />
+      <TextInput
+        label="Last Transaction"
+        value={lastTransaction}
+        onChangeText={setLastTransaction}
         style={styles.input}
       />
       <Button mode="contained" onPress={handleRegister} style={styles.button}>
