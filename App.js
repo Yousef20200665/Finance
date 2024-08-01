@@ -1,4 +1,3 @@
-// App.js
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -8,6 +7,7 @@ import Login from './Components/Login/Login';
 import Dashboard from './Components/Dashboard/Dashboard';
 import Transaction from './Components/Transaction/Transaction';
 import TransactionsList from './Components/TransactionsList/TransactionsList';
+import LoadingScreen from './Components/LoginScreen/LoginScreen';
 
 const Stack = createStackNavigator();
 
@@ -15,6 +15,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Intro">
+        <Stack.Screen name="LoadingScreen" component={LoadingScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Intro" component={Intro} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Login" component={Login} />

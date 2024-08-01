@@ -3,14 +3,13 @@ import { View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('localhost:8080/auth/login', {
+      const response = await fetch('http://127.0.0.1:8080/auth/login', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -20,18 +19,18 @@ const Login = ({ navigation }) => {
           password,
         }),
       });
-
+  
       const data = await response.json();
-
+      console.log('Login Response Data:', data); // طباعة الاستجابة للتأكد من البيانات
+  
       if (response.status === 200) {
         await AsyncStorage.setItem('token', data.token);
-        Alert.alert('Success', 'Logged in successfully', [
-          { text: 'OK', onPress: () => navigation.navigate('Dashboard') },
-        ]);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Dashboard' }],
+        });
       } else {
-        Alert.alert('Success', 'Logged in successfully', [
-          { text: 'OK', onPress: () => navigation.navigate('Dashboard') },
-        ]);
+        Alert.alert('Error', data.message || 'Failed to login');
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to login!');

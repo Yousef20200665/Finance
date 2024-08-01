@@ -6,40 +6,29 @@ const Register = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [gender, setGender] = useState('');
-  const [phone, setPhone] = useState('');
-  const [visaType, setVisaType] = useState('');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [country, setCountry] = useState('');
-  const [lastTransaction, setLastTransaction] = useState('');
 
   const handleRegister = async () => {
     try {
-      const response = await fetch('localhost:8080/auth/register', {
+      const response = await fetch('http://127.0.0.1:8080/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name,
           email,
           password,
-          gender,
-          phone,
+          fullName: name,
         }),
       });
 
       const data = await response.json();
+      console.log(data);
+      console.log('res is', response.status);
 
-      if (response.status === 201) {
-        Alert.alert('Success', data.message, [
-          { text: 'OK', onPress: () => navigation.navigate('Login') },
-        ]);
+      if (response.status === 200) {
+        navigation.navigate('login');
       } else {
-        Alert.alert('Success', data.message, [
-          { text: 'OK', onPress: () => navigation.navigate('Login') },
-        ]);
+        Alert.alert('Error', data.message);
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to register!');
@@ -50,7 +39,7 @@ const Register = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Register</Text>
       <TextInput
-        label="Name"
+        label="Full Name"
         value={name}
         onChangeText={setName}
         style={styles.input}
@@ -66,49 +55,6 @@ const Register = ({ navigation }) => {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        style={styles.input}
-      />
-      <TextInput
-        label="Gender"
-        value={gender}
-        onChangeText={setGender}
-        style={styles.input}
-      />
-      <TextInput
-        label="Phone"
-        value={phone}
-        onChangeText={setPhone}
-        keyboardType="phone-pad"
-        style={styles.input}
-      />
-      <TextInput
-        label="Visa Type"
-        value={visaType}
-        onChangeText={setVisaType}
-        style={styles.input}
-      />
-      <TextInput
-        label="Address"
-        value={address}
-        onChangeText={setAddress}
-        style={styles.input}
-      />
-      <TextInput
-        label="City"
-        value={city}
-        onChangeText={setCity}
-        style={styles.input}
-      />
-      <TextInput
-        label="Country"
-        value={country}
-        onChangeText={setCountry}
-        style={styles.input}
-      />
-      <TextInput
-        label="Last Transaction"
-        value={lastTransaction}
-        onChangeText={setLastTransaction}
         style={styles.input}
       />
       <Button mode="contained" onPress={handleRegister} style={styles.button}>

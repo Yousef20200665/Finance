@@ -1,26 +1,41 @@
 // TransactionsList.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Card, List, Divider, Text } from 'react-native-paper';
-
-const transactions = [
-  {
-    transactionId: '1',
-    transactionType: 'Expense',
-    transactionDate: '2021-01-01',
-    transactionAmount: '2000',
-    transactionDescription: 'Food Delivery',
-  },
-  {
-    transactionId: '6',
-    transactionType: 'Income',
-    transactionDate: '2021-01-01',
-    transactionAmount: '2000',
-    transactionDescription: 'Upwork',
-  },
-];
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TransactionsList = () => {
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await fetch('http://127.0.0.1:8080/transactions', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch transactions');
+        }
+
+        const data = await response.json();
+        setTransactions(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
   const renderItem = ({ item }) => (
     <Card style={styles.card}>
       <Card.Content>
@@ -33,13 +48,21 @@ const TransactionsList = () => {
     </Card>
   );
 
+  if (loading) {
+    return <View style={styles.container}><Text>Loading...</Text></View>;
+  }
+
+  if (error) {
+    return <View style={styles.container}><Text>Error: {error}</Text></View>;
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Transactions</Text>
       <FlatList
         data={transactions}
         renderItem={renderItem}
-        keyExtractor={item => item.transactionId}
+        keyExtractor={item => item.transactionId.toString()}
         ItemSeparatorComponent={() => <Divider />}
       />
     </View>
